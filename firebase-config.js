@@ -1,15 +1,10 @@
-// Firebase Configuration
-// REPLACE THESE VALUES WITH YOUR OWN FROM THE FIREBASE CONSOLE
-// Go to Project Settings -> General -> Your Apps -> SDK Setup and Configuration
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyALvHStqLOJKYMtm0p2Fm08GwCa5x2ugdg",
-  authDomain: "valorant-strat-maker.firebaseapp.com",
-  projectId: "valorant-strat-maker",
-  storageBucket: "valorant-strat-maker.firebasestorage.app",
-  messagingSenderId: "666492624267",
-  appId: "1:666492624267:web:2409c9ba98e9d2fa20e38e"
-};
+// Firebase Configuration (Encoded)
+// Note: This is basic obfuscation, not real security
+// Your data is still protected by Firestore Security Rules
+
+const encodedConfig = "eyJhcGlLZXkiOiJBSXphU3lBTHZIU3RxTE9KS1lNdG0wcDJGbTA4R3dDYTV4MnVnZGciLCJhdXRoRG9tYWluIjoidmFsb3JhbnQtc3RyYXQtbWFrZXIuZmlyZWJhc2VhcHAuY29tIiwicHJvamVjdElkIjoidmFsb3JhbnQtc3RyYXQtbWFrZXIiLCJzdG9yYWdlQnVja2V0IjoidmFsb3JhbnQtc3RyYXQtbWFrZXIuZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiNjY2NDkyNjI0MjY3IiwiYXBwSWQiOiIxOjY2NjQ5MjYyNDI2Nzp3ZWI6MjQwOWM5YmE5OGU5ZDJmYTIwZTM4ZSJ9";
+
+const firebaseConfig = JSON.parse(atob(encodedConfig));
 
 // Export so app.js can use it
 export default firebaseConfig;

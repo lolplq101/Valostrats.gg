@@ -2,3 +2,6 @@ node_modules
 .DS_Store
 dist
 .env
+
+# Note: firebase-config.js is committed with encoded config
+# This provides basic obfuscation (not real security)
