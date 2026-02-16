@@ -209,10 +209,19 @@ function performCoinFlip(call) {
     
     setTimeout(() => {
         mapBanEls.coin.classList.remove('flipping');
-        const result = Math.random() < 0.5 ? 'heads' : ' tails';
+        
+        // True 50/50 random result
+        const result = Math.random() < 0.5 ? 'heads' : 'tails';
         const won = result === call;
         const winner = won ? mapBanState.callingTeam : (mapBanState.callingTeam === 0 ? 1 : 0);
         const winnerName = winner === 0 ? mapBanState.teamA : mapBanState.teamB;
+        
+        // Visually show the correct coin face
+        if (result === 'heads') {
+            mapBanEls.coin.style.transform = 'rotateY(0deg)';
+        } else {
+            mapBanEls.coin.style.transform = 'rotateY(180deg)';
+        }
         
         mapBanState.currentTurn = winner;
         
@@ -466,6 +475,10 @@ function resetMapBan() {
     document.querySelector('.cointoss-choice').classList.remove('hidden');
     mapBanEls.headsTailsChoice.classList.add('hidden');
     mapBanEls.coinTossResult.classList.add('hidden');
+    
+    // Reset turn indicator
+    mapBanEls.currentTurnTeam.textContent = 'Team A';
+    mapBanEls.currentAction.textContent = 'Ban';
 }
 
 // Export for app.js
