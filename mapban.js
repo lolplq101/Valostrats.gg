@@ -14,7 +14,8 @@ const mapBanState = {
     banSequence: [], // Array of {type: 'ban'|'pick', team: 0|1}
     mapStates: {}, // {mapId: {status: 'available'|'banned'|'picked', team: 0|1, side: 'attack'|'defense'}}
     availableMaps: [],
-    competitiveMaps: ['Abyss', 'Ascent', 'Bind', 'Haven', 'Lotus', 'Split', 'Sunset'] // Common comp pool
+    competitiveMaps: ['Abyss', 'Ascent', 'Bind', 'Haven', 'Lotus', 'Split', 'Sunset'], // Common comp pool
+    coinHistory: [] // Track last 10 flips for balancing
 };
 
 // Map Ban DOM Elements
@@ -210,8 +211,25 @@ function performCoinFlip(call) {
     setTimeout(() => {
         mapBanEls.coin.classList.remove('flipping');
         
-        // True 50/50 random result
-        const result = Math.random() < 0.5 ? 'heads' : 'tails';
+        
+        // Balanced Random Logic (Pseudo-random to avoid streaks)
+        let headsProbability = 0.5;
+        const history = mapBanState.coinHistory;
+        
+        if (history.length >= 4) {
+             const recent = history.slice(-5);
+             const headsCount = recent.filter(r => r === 'heads').length;
+             // If recently mostly heads, slight bias to tails, and vice versa
+             if (headsCount >= 4) headsProbability = 0.35; // Bias towards tails
+             if (headsCount <= 1) headsProbability = 0.65; // Bias towards heads
+        }
+        
+        const result = Math.random() < headsProbability ? 'heads' : 'tails';
+        
+        // Update history (keep last 10)
+        mapBanState.coinHistory.push(result);
+        if (mapBanState.coinHistory.length > 10) mapBanState.coinHistory.shift();
+
         const won = result === call;
         const winner = won ? mapBanState.callingTeam : (mapBanState.callingTeam === 0 ? 1 : 0);
         const winnerName = winner === 0 ? mapBanState.teamA : mapBanState.teamB;
