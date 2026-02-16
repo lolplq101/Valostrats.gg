@@ -326,12 +326,24 @@ input[type="text"]:focus, textarea:focus {
 
 .agents-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Increased min-width */
-    gap: 1.5rem; /* Increased gap */
+    grid-template-columns: repeat(4, 1fr); /* Force 4 columns for consistency */
+    gap: 0.75rem;
     overflow-y: auto;
     padding-right: 0.5rem; 
     padding-bottom: 2rem;
-    align-content: start; /* Prevents stretching if rows aren't full */
+    align-content: start;
+}
+
+/* Responsive: 3 cols on tablet, 2 on mobile */
+@media (max-width: 1200px) {
+    .agents-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 768px) {
+    .agents-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* Scrollbar styling */
