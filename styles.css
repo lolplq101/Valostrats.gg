@@ -327,7 +327,8 @@ input[type="text"]:focus, textarea:focus {
 .agents-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* Force 4 columns for consistency */
-    gap: 1.25rem; /* Increased spacing */
+    grid-auto-rows: 160px; /* Ensure all rows are uniform based on card height */
+    gap: 1.25rem; /* Spacious gap */
     overflow-y: auto;
     padding-right: 0.5rem; 
     padding-bottom: 2rem;
@@ -361,7 +362,8 @@ input[type="text"]:focus, textarea:focus {
 /* Agent Card in Picker */
 .agent-card-picker {
     width: 100%;
-    aspect-ratio: 0.8; /* taller profile for character art */
+    height: 160px; /* Fixed height to prevent squishing */
+    /* aspect-ratio removed in favor of fixed height */
     border-radius: 8px;
     background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
     cursor: pointer;
