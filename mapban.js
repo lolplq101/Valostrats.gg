@@ -5,6 +5,7 @@
 // Map Ban State
 const mapBanState = {
     banType: 'all', // 'all', 'competitive', 'custom'
+    bestOf: 3, // 1, 2, 3, or 5
     customMaps: [],
     teamA: 'Team A',
     teamB: 'Team B',
@@ -84,6 +85,16 @@ function initMapBan() {
         };
     });
     
+    // Best Of selection
+    const bestOfBtns = document.querySelectorAll('.bestof-btn');
+    bestOfBtns.forEach(btn => {
+        btn.onclick = () => {
+            bestOfBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            mapBanState.bestOf = parseInt(btn.dataset.bestof);
+        };
+    });
+    
     mapBanEls.startBanBtn.onclick = startMapBanProcess;
     
     // Coin toss
@@ -153,8 +164,18 @@ function startMapBanProcess() {
         mapBanState.availableMaps = [...mapBanState.customMaps];
     }
     
-    if (mapBanState.availableMaps.length < 3) {
-        alert('Please select at least 3 maps!');
+    // Validate minimum maps based on Best Of format
+    const minMapsRequired = {
+        1: 7,  // Bo1: need at least 7 maps (6 bans + 1 pick)
+        2: 6,  // Bo2: need at least 6 maps (4 bans + 2 picks)
+        3: 7,  // Bo3: need at least 7 maps (4 bans + 3 picks)
+        5: 9   // Bo5: need at least 9 maps (4 bans + 5 picks)
+    };
+    
+    const minRequired = minMapsRequired[mapBanState.bestOf] || 7;
+    
+    if (mapBanState.availableMaps.length < minRequired) {
+        alert(`Please select at least ${minRequired} maps for Bo${mapBanState.bestOf} format!`);
         return;
     }
     
@@ -202,21 +223,75 @@ function performCoinFlip(call) {
 }
 
 function setupBanSequence(goFirst) {
-    // Standard Bo3 sequence: Ban, Ban, Pick, Pick, Ban, Ban, Pick (remaining)
-    // Team that goes first gets first ban
     const first = goFirst ? mapBanState.currentTurn : (mapBanState.currentTurn === 0 ? 1 : 0);
     const second = first === 0 ? 1 : 0;
     
-    mapBanState.banSequence = [
-        {type: 'ban', team: first},
-        {type: 'ban', team: second},
-        {type: 'pick', team: first},
-        {type: 'pick', team: second},
-        {type: 'ban', team: first},
-        {type: 'ban', team: second},
-        {type: 'pick', team: first}
-    ];
+    // Generate ban/pick sequence based on Best Of format
+    let sequence = [];
     
+    switch(mapBanState.bestOf) {
+        case 1: // Bo1: Ban-Ban-Ban-Ban-Ban-Ban-Pick (last remaining)
+            sequence = [
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first} // Last remaining map
+            ];
+            break;
+            
+        case 2: // Bo2: Ban-Ban-Pick-Pick-Ban-Ban
+            sequence = [
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first},
+                {type: 'pick', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second}
+            ];
+            break;
+            
+        case 3: // Bo3: Ban-Ban-Pick-Pick-Ban-Ban-Pick (last remaining)
+            sequence = [
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first},
+                {type: 'pick', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first} // Decider map
+            ];
+            break;
+            
+        case 5: // Bo5: Ban-Ban-Pick-Pick-Pick-Pick-Ban-Ban-Pick (last remaining)
+            sequence = [
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first},
+                {type: 'pick', team: second},
+                {type: 'pick', team: first},
+                {type: 'pick', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first} // Decider map
+            ];
+            break;
+            
+        default:
+            sequence = [ // Fallback to Bo3
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first},
+                {type: 'pick', team: second},
+                {type: 'ban', team: first},
+                {type: 'ban', team: second},
+                {type: 'pick', team: first}
+            ];
+    }
+    
+    mapBanState.banSequence = sequence;
     mapBanState.currentTurn = first;
 }
 

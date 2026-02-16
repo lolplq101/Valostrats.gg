@@ -59,6 +59,53 @@
     color: white;
 }
 
+/* Best Of Selection */
+.bestof-options {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.bestof-btn {
+    background: rgba(0,0,0,0.3);
+    border: 2px solid var(--glass-border);
+    color: var(--text-secondary);
+    padding: 1.25rem 1.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.bestof-btn:hover {
+    border-color: var(--accent-red);
+    color: var(--text-primary);
+    transform: translateY(-3px);
+}
+
+.bestof-btn.active {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: white;
+}
+
+.bestof-label {
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.bestof-desc {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    font-weight: 400;
+}
+
 .custom-maps-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
