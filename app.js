@@ -28,6 +28,9 @@ const state = {
     user: null // Current Firebase User
 };
 
+// Expose state globally for mapban.js
+window.state = state;
+
 // DOM Elements
 const els = {
     app: document.getElementById('app'),
@@ -469,6 +472,9 @@ function switchView(viewName) {
         els.viewSavedBtn.classList.add('active');
     }
 }
+
+// Expose switchView globally for mapban.js
+window.switchView = switchView;
 
 function setupEventListeners() {
     els.viewMapsBtn.onclick = () => switchView('maps');
