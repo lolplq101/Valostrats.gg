@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valostrats.gg</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="roster-styles.css">
     <link rel="stylesheet" href="mapban-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Tungsten:wght@600&family=DIN+Next+W1G:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
@@ -19,6 +20,7 @@
             <nav>
                 <button id="view-maps-btn" class="nav-btn active">Maps</button>
                 <button id="view-mapban-btn" class="nav-btn">Map Ban</button>
+                <button id="view-roster-btn" class="nav-btn">Team Roster</button>
                 <button id="view-saved-btn" class="nav-btn">Saved Comps</button>
                 <span id="user-display" class="user-display hidden"></span>
                 <button id="login-btn" class="nav-btn login-btn">Login</button>
@@ -255,6 +257,23 @@
                 </div>
             </section>
 
+            <!-- Team Roster View -->
+            <section id="roster-view" class="view-section hidden">
+                <div class="roster-container">
+                    <div class="roster-header">
+                        <input type="text" id="team-name-input" class="team-name-input" placeholder="Enter Team Name" />
+                    </div>
+                    
+                    <div class="players-grid" id="players-grid">
+                        <!-- Player cards will be generated dynamically -->
+                    </div>
+                    
+                    <div class="roster-actions">
+                        <button id="save-roster-btn" class="primary-btn">Save Roster</button>
+                    </div>
+                </div>
+            </section>
+
             <section id="saved-comps-view" class="view-section hidden">
                 <h2>Your Saved Comps</h2>
                 <div id="saved-comps-list" class="comps-list">
@@ -262,6 +281,19 @@
                 </div>
             </section>
         </main>
+        
+        <!-- Agent Selector Modal -->
+        <div id="agent-selector-modal" class="modal hidden">
+            <div class="modal-content agent-selector-content">
+                <div class="modal-header">
+                    <h2>Select Agent</h2>
+                    <button class="modal-close" onclick="closeAgentSelector()">×</button>
+                </div>
+                <div class="agent-selector-grid" id="agent-selector-grid">
+                    <!-- Agent cards populated dynamically -->
+                </div>
+            </div>
+        </div>
         
         <!-- Toast Notification -->
         <div id="toast-container" class="toast-container"></div>

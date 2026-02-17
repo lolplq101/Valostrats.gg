@@ -655,14 +655,18 @@ function switchView(viewName) {
     
     const homeScreen = document.getElementById('home-screen');
     const mapBanView = document.getElementById('mapban-view');
+    const rosterView = document.getElementById('roster-view');
     if (homeScreen) homeScreen.classList.add('hidden');
     if (mapBanView) mapBanView.classList.add('hidden');
+    if (rosterView) rosterView.classList.add('hidden');
     
     // Reset button states
     els.viewMapsBtn.classList.remove('active');
     els.viewSavedBtn.classList.remove('active');
     const mapBanBtn = document.getElementById('view-mapban-btn');
+    const rosterBtn = document.getElementById('view-roster-btn');
     if (mapBanBtn) mapBanBtn.classList.remove('active');
+    if (rosterBtn) rosterBtn.classList.remove('active');
     
     // Show selected view
     if (viewName === 'home') {
@@ -677,6 +681,11 @@ function switchView(viewName) {
         if (mapBanView) {
             mapBanView.classList.remove('hidden');
             if (mapBanBtn) mapBanBtn.classList.add('active');
+        }
+    } else if (viewName === 'roster') {
+        if (rosterView) {
+            rosterView.classList.remove('hidden');
+            if (rosterBtn) rosterBtn.classList.add('active');
         }
     } else if (viewName === 'saved') {
         if (!state.user) {
