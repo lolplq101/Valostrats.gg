@@ -196,14 +196,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.loading.innerHTML = '<p>Error loading data. Please refresh.</p>';
     }
 
+
     setupEventListeners();
     setupAuthListener();
+    setupDropdown();
     
     // Initialize Map Ban system
     if (typeof initMapBan === 'function') {
         initMapBan();
     }
 });
+
+// Dropdown menu functionality
+function setupDropdown() {
+    const dropdownBtn = document.getElementById('strat-tools-btn');
+    const dropdownMenu = document.getElementById('strat-tools-menu');
+    
+    if (!dropdownBtn || !dropdownMenu) return;
+    
+    // Toggle dropdown on button click
+    dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-dropdown')) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+    
+    // Handle dropdown item clicks
+    const dropdownItems = dropdownMenu.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', () => {
+            dropdownMenu.classList.remove('show');
+        });
+    });
+}
+
 
 // Auth Logic
 function setupAuthListener() {
@@ -669,32 +701,29 @@ function switchView(viewName) {
     if (mapBanView) mapBanView.classList.add('hidden');
     if (rosterView) rosterView.classList.add('hidden');
     
-    // Reset button states
-    els.viewMapsBtn.classList.remove('active');
+    // Reset button states (including dropdown items)
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => item.classList.remove('active'));
     els.viewSavedBtn.classList.remove('active');
-    const mapBanBtn = document.getElementById('view-mapban-btn');
-    const rosterBtn = document.getElementById('view-roster-btn');
-    if (mapBanBtn) mapBanBtn.classList.remove('active');
-    if (rosterBtn) rosterBtn.classList.remove('active');
     
     // Show selected view
     if (viewName === 'home') {
         if (homeScreen) homeScreen.classList.remove('hidden');
     } else if (viewName === 'maps') {
         els.mapsGrid.classList.remove('hidden');
-        els.viewMapsBtn.classList.add('active');
+        document.getElementById('view-maps-btn')?.classList.add('active');
         state.currentMap = null;
     } else if (viewName === 'builder') {
         els.compBuilder.classList.remove('hidden');
     } else if (viewName === 'mapban') {
         if (mapBanView) {
             mapBanView.classList.remove('hidden');
-            if (mapBanBtn) mapBanBtn.classList.add('active');
+            document.getElementById('view-mapban-btn')?.classList.add('active');
         }
     } else if (viewName === 'roster') {
         if (rosterView) {
             rosterView.classList.remove('hidden');
-            if (rosterBtn) rosterBtn.classList.add('active');
+            document.getElementById('view-roster-btn')?.classList.add('active');
             // Load roster data when viewing
             if (window.loadRosterFromFirebase) {
                 window.loadRosterFromFirebase();
