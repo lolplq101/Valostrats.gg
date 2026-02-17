@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="roster-styles.css">
     <link rel="stylesheet" href="roster-modal-footer.css">
     <link rel="stylesheet" href="dropdown-nav.css">
+    <link rel="stylesheet" href="pro-matches.css">
     <link rel="stylesheet" href="mapban-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Tungsten:wght@600&family=DIN+Next+W1G:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
@@ -28,6 +29,14 @@
                         <button class="dropdown-item" id="view-maps-btn">Comp Builder</button>
                         <button class="dropdown-item" id="view-mapban-btn">Map Bans</button>
                         <button class="dropdown-item" id="view-roster-btn">Team Roster</button>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <button class="nav-btn dropdown-toggle" id="vct-btn">
+                        VCT ▾
+                    </button>
+                    <div class="dropdown-menu" id="vct-menu">
+                        <button class="dropdown-item" id="view-pro-matches-btn">Pro Matches</button>
                     </div>
                 </div>
                 <button id="view-saved-btn" class="nav-btn">Saved Comps</button>
@@ -290,6 +299,45 @@
                 </div>
             </section>
 
+            <section id="pro-matches-view" class="view-section hidden">
+                <div class="pro-matches-container">
+                    <h2 class="pro-matches-title">PRO MATCH TRACKER</h2>
+                    <p class="pro-matches-subtitle">Study professional team compositions from VCT tournaments</p>
+                    
+                    <div class="pro-matches-filters">
+                        <select id="filter-map" class="filter-select">
+                            <option value="all">All Maps</option>
+                            <option value="Ascent">Ascent</option>
+                            <option value="Bind">Bind</option>
+                            <option value="Breeze">Breeze</option>
+                            <option value="Haven">Haven</option>
+                            <option value="Icebox">Icebox</option>
+                            <option value="Lotus">Lotus</option>
+                            <option value="Split">Split</option>
+                            <option value="Sunset">Sunset</option>
+                        </select>
+                        
+                        <select id="filter-tournament" class="filter-select">
+                            <option value="all">VCT Champions 2024</option>
+                        </select>
+                        
+                        <select id="filter-region" class="filter-select">
+                            <option value="all">All Regions</option>
+                            <option value="NA">North America</option>
+                            <option value="EMEA">EMEA</option>
+                            <option value="APAC">APAC</option>
+                            <option value="BR">Brazil</option>
+                            <option value="LATAM">LATAM</option>
+                            <option value="CN">China</option>
+                        </select>
+                    </div>
+                    
+                    <div id="pro-matches-grid" class="pro-matches-grid">
+                        <!-- Match cards will be populated here -->
+                    </div>
+                </div>
+            </section>
+
             <section id="saved-comps-view" class="view-section hidden">
                 <h2>Your Saved Comps</h2>
                 <div id="saved-comps-list" class="comps-list">
@@ -337,6 +385,7 @@
     </script>
     <script src="mapban.js"></script>
     <script src="roster.js"></script>
+    <script src="pro-matches.js"></script>
     <script src="app.js" type="module"></script>
 </body>
 </html>

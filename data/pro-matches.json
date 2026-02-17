@@ -1,0 +1,136 @@
+{
+  "matches": [
+    {
+      "id": "vct-2024-001",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-25",
+      "map": "Ascent",
+      "patch": "9.04",
+      "team1": {
+        "name": "Sentinels",
+        "region": "NA",
+        "score": 13,
+        "side": "Attack",
+        "composition": ["Omen", "Jett", "KAY/O", "Sova", "Killjoy"]
+      },
+      "team2": {
+        "name": "FNATIC",
+        "region": "EMEA",
+        "score": 10,
+        "side": "Defense",
+        "composition": ["Astra", "Raze", "Breach", "Fade", "Cypher"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example1"
+    },
+    {
+      "id": "vct-2024-002",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-24",
+      "map": "Bind",
+      "patch": "9.04",
+      "team1": {
+        "name": "Paper Rex",
+        "region": "APAC",
+        "score": 13,
+        "side": "Attack",
+        "composition": ["Brimstone", "Raze", "Gekko", "Fade", "Cypher"]
+      },
+      "team2": {
+        "name": "Evil Geniuses",
+        "region": "NA",
+        "score": 11,
+        "side": "Defense",
+        "composition": ["Viper", "Raze", "Skye", "Sova", "Killjoy"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example2"
+    },
+    {
+      "id": "vct-2024-004",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-23",
+      "map": "Lotus",
+      "patch": "9.04",
+      "team1": {
+        "name": "DRX",
+        "region": "APAC",
+        "score": 13,
+        "side": "Attack",
+        "composition": ["Omen", "Jett", "Skye", "Fade", "Cypher"]
+      },
+      "team2": {
+        "name": "LOUD",
+        "region": "BR",
+        "score": 7,
+        "side": "Defense",
+        "composition": ["Astra", "Neon", "KAY/O", "Sova", "Killjoy"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example4"
+    },
+    {
+      "id": "vct-2024-006",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-22",
+      "map": "Sunset",
+      "patch": "9.04",
+      "team1": {
+        "name": "Sentinels",
+        "region": "NA",
+        "score": 13,
+        "side": "Attack",
+        "composition": ["Omen", "Jett", "Gekko", "Breach", "Cypher"]
+      },
+      "team2": {
+        "name": "PRX",
+        "region": "APAC",
+        "score": 10,
+        "side": "Defense",
+        "composition": ["Harbor", "Raze", "Skye", "Fade", "Killjoy"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example6"
+    },
+    {
+      "id": "vct-2024-007",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-21",
+      "map": "Icebox",
+      "patch": "9.04",
+      "team1": {
+        "name": "EDG",
+        "region": "CN",
+        "score": 13,
+        "side": "Defense",
+        "composition": ["Viper", "Jett", "KAY/O", "Sova", "Sage"]
+      },
+      "team2": {
+        "name": "Leviatán",
+        "region": "LATAM",
+        "score": 8,
+        "side": "Attack",
+        "composition": ["Omen", "Raze", "Gekko", "Fade", "Killjoy"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example7"
+    },
+    {
+      "id": "vct-2024-009",
+      "tournament": "VCT Champions 2024",
+      "date": "2024-08-20",
+      "map": "Haven",
+      "patch": "9.04",
+      "team1": {
+        "name": "Team Liquid",
+        "region": "EMEA",
+        "score": 13,
+        "side": "Defense",
+        "composition": ["Astra", "Jett", "KAY/O", "Sova", "Cypher"]
+      },
+      "team2": {
+        "name": "Gen.G",
+        "region": "APAC",
+        "score": 11,
+        "side": "Attack",
+        "composition": ["Omen", "Raze", "Breach", "Fade", "Killjoy"]
+      },
+      "vodUrl": "https://www.youtube.com/watch?v=example9"
+    }
+  ]
+}

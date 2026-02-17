@@ -178,6 +178,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.initRoster();
         }
         
+        // Initialize pro matches after agents are loaded
+        if (window.initProMatches) {
+            window.initProMatches();
+        }
+        
         // Add feature card navigation
         document.getElementById('feature-maps')?.addEventListener('click', () => {
             switchView('maps');
@@ -209,30 +214,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Dropdown menu functionality
 function setupDropdown() {
-    const dropdownBtn = document.getElementById('strat-tools-btn');
-    const dropdownMenu = document.getElementById('strat-tools-menu');
+    // Setup Strat Tools dropdown
+    const stratToolsBtn = document.getElementById('strat-tools-btn');
+    const stratToolsMenu = document.getElementById('strat-tools-menu');
     
-    if (!dropdownBtn || !dropdownMenu) return;
+    if (stratToolsBtn && stratToolsMenu) {
+        stratToolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            stratToolsMenu.classList.toggle('show');
+            // Close VCT menu if open
+            const vctMenu = document.getElementById('vct-menu');
+            if (vctMenu) vctMenu.classList.remove('show');
+        });
+        
+        stratToolsMenu.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                stratToolsMenu.classList.remove('show');
+            });
+        });
+    }
     
-    // Toggle dropdown on button click
-    dropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
+    // Setup VCT dropdown
+    const vctBtn = document.getElementById('vct-btn');
+    const vctMenu = document.getElementById('vct-menu');
     
-    // Close dropdown when clicking outside
+    if (vctBtn && vctMenu) {
+        vctBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            vctMenu.classList.toggle('show');
+            // Close Strat Tools menu if open
+            if (stratToolsMenu) stratToolsMenu.classList.remove('show');
+        });
+        
+        vctMenu.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                vctMenu.classList.remove('show');
+            });
+        });
+    }
+    
+    // Close all dropdowns when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.nav-dropdown')) {
-            dropdownMenu.classList.remove('show');
+            if (stratToolsMenu) stratToolsMenu.classList.remove('show');
+            if (vctMenu) vctMenu.classList.remove('show');
         }
-    });
-    
-    // Handle dropdown item clicks
-    const dropdownItems = dropdownMenu.querySelectorAll('.dropdown-item');
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', () => {
-            dropdownMenu.classList.remove('show');
-        });
     });
 }
 
@@ -697,9 +723,11 @@ function switchView(viewName) {
     const homeScreen = document.getElementById('home-screen');
     const mapBanView = document.getElementById('mapban-view');
     const rosterView = document.getElementById('roster-view');
+    const proMatchesView = document.getElementById('pro-matches-view');
     if (homeScreen) homeScreen.classList.add('hidden');
     if (mapBanView) mapBanView.classList.add('hidden');
     if (rosterView) rosterView.classList.add('hidden');
+    if (proMatchesView) proMatchesView.classList.add('hidden');
     
     // Reset button states (including dropdown items)
     const dropdownItems = document.querySelectorAll('.dropdown-item');
@@ -729,6 +757,11 @@ function switchView(viewName) {
                 window.loadRosterFromFirebase();
             }
         }
+    } else if (viewName === 'pro-matches') {
+        if (proMatchesView) {
+            proMatchesView.classList.remove('hidden');
+            document.getElementById('view-pro-matches-btn')?.classList.add('active');
+        }
     } else if (viewName === 'saved') {
         if (!state.user) {
             showToast("Please login first!", 'warning');
@@ -743,10 +776,24 @@ function switchView(viewName) {
 window.switchView = switchView;
 
 function setupEventListeners() {
+    // Navigation - using onclick for immediate assignment
     els.viewMapsBtn.onclick = () => switchView('maps');
     els.viewSavedBtn.onclick = () => switchView('saved');
     els.backToMapsBtn.onclick = () => switchView('maps');
+    
+    // Dropdown items - wait for DOM to be ready
+    const mapBanBtn = document.getElementById('view-mapban-btn');
+    const rosterBtn = document.getElementById('view-roster-btn');
+    const proMatchesBtn = document.getElementById('view-pro-matches-btn');
+    
+    if (mapBanBtn) mapBanBtn.onclick = () => switchView('mapban');
+    if (rosterBtn) rosterBtn.onclick = () => switchView('roster');
+    if (proMatchesBtn) proMatchesBtn.onclick = () => switchView('pro-matches');
+    
+    // Comp builder actions
     els.saveCompBtn.onclick = saveCurrentComp;
+    
+    // Login/Logout
     els.loginBtn.onclick = login;
     els.logoutBtn.onclick = logout;
     
