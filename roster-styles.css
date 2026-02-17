@@ -270,10 +270,11 @@
 
 .agent-selector-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 1.25rem;
     padding: 2rem;
     overflow-y: auto;
+    max-height: calc(85vh - 200px);
 }
 
 .agent-selector-card {
@@ -285,6 +286,29 @@
     position: relative;
     transition: all 0.3s;
     background: rgba(0, 0, 0, 0.3);
+}
+
+.agent-selector-card.selected {
+    border-color: var(--accent-red);
+    box-shadow: 0 0 20px rgba(255, 70, 85, 0.6);
+    transform: scale(0.95);
+}
+
+.agent-selector-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--accent-red);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
 }
 
 .agent-selector-card:hover {

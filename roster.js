@@ -14,6 +14,7 @@ const rosterState = {
 };
 
 let currentPlayerIndex = null; // Track which player is selecting an agent
+let selectedAgentsTemp = []; // Temporary storage for multi-select
 
 const rosterEls = {
     viewRosterBtn: document.getElementById('view-roster-btn'),
@@ -97,6 +98,7 @@ function renderAgentPool(agentPool, playerIndex) {
 
 function openAgentSelector(playerIndex) {
     currentPlayerIndex = playerIndex;
+    selectedAgentsTemp = [...rosterState.players[playerIndex].agentPool]; // Copy current agents
     rosterEls.agentSelectorModal.classList.remove('hidden');
     renderAgentSelector();
 }
@@ -104,6 +106,7 @@ function openAgentSelector(playerIndex) {
 function closeAgentSelector() {
     rosterEls.agentSelectorModal.classList.add('hidden');
     currentPlayerIndex = null;
+    selectedAgentsTemp = [];
 }
 
 function renderAgentSelector() {
@@ -114,7 +117,13 @@ function renderAgentSelector() {
     state.agents.forEach(agent => {
         const card = document.createElement('div');
         card.className = 'agent-selector-card';
-        card.onclick = () => addAgentToPool(currentPlayerIndex, agent.displayName);
+        
+        // Mark as selected if in temp selection
+        if (selectedAgentsTemp.includes(agent.displayName)) {
+            card.classList.add('selected');
+        }
+        
+        card.onclick = () => toggleAgentSelection(agent.displayName, card);
         
         card.innerHTML = `
             <img src="${agent.displayIcon}" alt="${agent.displayName}">
@@ -125,20 +134,29 @@ function renderAgentSelector() {
     });
 }
 
-function addAgentToPool(playerIndex, agentName) {
-    const player = rosterState.players[playerIndex];
+function toggleAgentSelection(agentName, cardElement) {
+    const index = selectedAgentsTemp.indexOf(agentName);
     
-    // Check if agent already in pool
-    if (player.agentPool.includes(agentName)) {
-        showToast(`${agentName} already in pool!`, 'warning');
-        return;
+    if (index > -1) {
+        // Remove from selection
+        selectedAgentsTemp.splice(index, 1);
+        cardElement.classList.remove('selected');
+    } else {
+        // Add to selection
+        selectedAgentsTemp.push(agentName);
+        cardElement.classList.add('selected');
     }
-    
-    player.agentPool.push(agentName);
-    renderRoster();
-    closeAgentSelector();
-    showToast(`${agentName} added`, 'success');
 }
+
+function confirmAgentSelection() {
+    if (currentPlayerIndex !== null) {
+        rosterState.players[currentPlayerIndex].agentPool = [...selectedAgentsTemp];
+        renderRoster();
+        showToast(`${selectedAgentsTemp.length} agent(s) selected`, 'success');
+    }
+    closeAgentSelector();
+}
+
 
 function removeAgentFromPool(playerIndex, agentName) {
     const player = rosterState.players[playerIndex];
@@ -216,7 +234,9 @@ async function loadRosterFromFirebase() {
 window.openAgentSelector = openAgentSelector;
 window.closeAgentSelector = closeAgentSelector;
 window.removeAgentFromPool = removeAgentFromPool;
+window.confirmAgentSelection = confirmAgentSelection;
 
 // Initialize when ready - called from app.js after agents are loaded
 window.initRoster = initRoster;
+window.loadRosterFromFirebase = loadRosterFromFirebase;
 

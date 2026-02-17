@@ -1,0 +1,41 @@
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.modal-footer button {
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid var(--glass-border);
+}
+
+.modal-footer .btn-cancel {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.modal-footer .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-secondary);
+}
+
+.modal-footer .btn-ok {
+    background: var(--accent-red);
+    color: white;
+    border-color: var(--accent-red);
+}
+
+.modal-footer .btn-ok:hover {
+    background: #e63946;
+    box-shadow: 0 4px 12px rgba(255, 70, 85, 0.4);
+    transform: translateY(-2px);
+}

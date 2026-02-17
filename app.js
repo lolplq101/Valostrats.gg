@@ -695,6 +695,10 @@ function switchView(viewName) {
         if (rosterView) {
             rosterView.classList.remove('hidden');
             if (rosterBtn) rosterBtn.classList.add('active');
+            // Load roster data when viewing
+            if (window.loadRosterFromFirebase) {
+                window.loadRosterFromFirebase();
+            }
         }
     } else if (viewName === 'saved') {
         if (!state.user) {
