@@ -269,14 +269,16 @@ function setupBanSequence(goFirst) {
             ];
             break;
             
-        case 2: // Bo2: Ban-Ban-Pick-Pick-Ban-Ban
+        case 2: // Bo2: Ban until 2 maps remain, then each team picks one
+            // For 7 maps: 5 bans leave 2 maps, then each team picks one
             sequence = [
                 {type: 'ban', team: first},
                 {type: 'ban', team: second},
-                {type: 'pick', team: first},
-                {type: 'pick', team: second},
                 {type: 'ban', team: first},
-                {type: 'ban', team: second}
+                {type: 'ban', team: second},
+                {type: 'ban', team: first}, // 5 bans total, 2 maps remain
+                {type: 'pick', team: first}, // Team A picks their map
+                {type: 'pick', team: second} // Team B gets remaining map
             ];
             break;
             
