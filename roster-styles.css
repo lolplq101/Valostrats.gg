@@ -331,9 +331,9 @@
     background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
     color: white;
     text-align: center;
-    padding: 0.75rem 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 700;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.65rem; /*changable*/
+    font-weight: 700; /*changable*/
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em; /*changable*/
 }
