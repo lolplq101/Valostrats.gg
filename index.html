@@ -61,6 +61,13 @@
                         <p>Professional map veto system with Best-of-1/3/5 formats, coin toss, and side selection.</p>
                         <button class="feature-btn">Start Ban Phase →</button>
                     </div>
+                    
+                    <div class="feature-card" id="feature-roster">
+                        <div class="feature-icon">👥</div>
+                        <h2>Team Roster</h2>
+                        <p>Manage your team with player names and agent pools. Track who plays which agents.</p>
+                        <button class="feature-btn">Manage Roster →</button>
+                    </div>
                 </div>
             </section>
             
@@ -312,10 +319,11 @@
         window.firebaseModules = {
             initializeApp,
             getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
-            getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy
+            getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, setDoc, getDoc
         };
     </script>
     <script src="mapban.js"></script>
+    <script src="roster.js"></script>
     <script src="app.js" type="module"></script>
 </body>
 </html>

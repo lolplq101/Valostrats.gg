@@ -182,6 +182,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             switchView('mapban');
         });
         
+        document.getElementById('feature-roster')?.addEventListener('click', () => {
+            switchView('roster');
+        });
+        
     } catch (err) {
         console.error('Failed to load assets', err);
         els.loading.innerHTML = '<p>Error loading data. Please refresh.</p>';
