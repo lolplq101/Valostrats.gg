@@ -167,10 +167,10 @@ function startMapBanProcess() {
     
     // Validate minimum maps based on Best Of format
     const minMapsRequired = {
-        1: 7,  // Bo1: need at least 7 maps (6 bans + 1 pick)
-        2: 6,  // Bo2: need at least 6 maps (4 bans + 2 picks)
-        3: 7,  // Bo3: need at least 7 maps (4 bans + 3 picks)
-        5: 9   // Bo5: need at least 9 maps (4 bans + 5 picks)
+        1: 2,  // Bo1: need at least 2 maps (1 ban minimum + 1 pick)
+        2: 3,  // Bo2: need at least 3 maps (1 ban minimum + 2 picks)
+        3: 5,  // Bo3: need at least 5 maps (2 bans minimum + 3 picks)
+        5: 7   // Bo5: need at least 7 maps (2 bans + 5 picks)
     };
     
     const minRequired = minMapsRequired[mapBanState.bestOf] || 7;
