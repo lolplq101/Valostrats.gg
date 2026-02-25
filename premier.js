@@ -38,7 +38,7 @@ const premierState = {
     matchHistory: [],
     leaderboard: [],
     linkedComps: {}, // { week1: [compDocId, ...], ... }
-    loading: false,
+    fetching: false,  // guard against concurrent loads
     error: null,
 };
 
@@ -48,20 +48,27 @@ const premierState = {
 
 async function initPremier() {
     premierState.apiKey = localStorage.getItem('henrik_api_key') || null;
+
+    // Always render the static calendar immediately — never block on a spinner
+    await loadLinkedComps();
     renderPremierView();
 
+    // If no key, show the modal (but calendar is already visible behind it)
     if (!premierState.apiKey) {
         showApiKeyModal();
         return;
     }
 
-    await loadPremierData();
+    // Fetch live data in the background without blocking the UI
+    if (!premierState.fetching) {
+        fetchLiveData();
+    }
 }
 
-async function loadPremierData() {
-    premierState.loading = true;
+async function fetchLiveData() {
+    if (premierState.fetching) return;
+    premierState.fetching = true;
     premierState.error = null;
-    renderPremierView(); // show skeleton
 
     try {
         // Step 1: Resolve team ID (cached in localStorage)
@@ -74,7 +81,7 @@ async function loadPremierData() {
 
         // Step 2: Fetch season schedule from API
         try {
-            const season = await henrikGet(`/seasons/${PREMIER_CONFIG.region}`);
+            const season = await henrikGetWithTimeout(`/seasons/${PREMIER_CONFIG.region}`);
             if (season?.data?.scheduled_events?.length) {
                 premierState.schedule = parseSeason(season.data.scheduled_events);
             }
@@ -85,7 +92,7 @@ async function loadPremierData() {
         // Step 3: Fetch match history
         if (premierState.teamId) {
             try {
-                const hist = await henrikGet(`/${premierState.teamId}/history`);
+                const hist = await henrikGetWithTimeout(`/${premierState.teamId}/history`);
                 premierState.matchHistory = hist?.data || [];
             } catch (e) {
                 console.warn('Match history fetch failed:', e.message);
@@ -94,34 +101,43 @@ async function loadPremierData() {
 
         // Step 4: Fetch leaderboard
         try {
-            const lb = await henrikGet(`/leaderboard/${PREMIER_CONFIG.region}`);
+            const lb = await henrikGetWithTimeout(`/leaderboard/${PREMIER_CONFIG.region}`);
             premierState.leaderboard = lb?.data || [];
         } catch (e) {
             console.warn('Leaderboard fetch failed:', e.message);
         }
-
-        // Step 5: Load linked comps from Firebase
-        await loadLinkedComps();
 
     } catch (e) {
         premierState.error = e.message;
         console.error('Premier load error:', e);
     }
 
-    premierState.loading = false;
-    renderPremierView();
+    premierState.fetching = false;
+    renderPremierView(); // re-render with live data
 }
 
 // ==========================================
 // API HELPERS
 // ==========================================
 
-async function henrikGet(path) {
-    const res = await fetch(`${PREMIER_CONFIG.apiBase}${path}`, {
+function fetchWithTimeout(url, options = {}, ms = 10000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { ...options, signal: controller.signal })
+        .finally(() => clearTimeout(timer));
+}
+
+async function henrikGetWithTimeout(path) {
+    const res = await fetchWithTimeout(`${PREMIER_CONFIG.apiBase}${path}`, {
         headers: { 'Authorization': premierState.apiKey }
     });
     if (!res.ok) throw new Error(`API ${res.status}: ${res.statusText}`);
     return res.json();
+}
+
+// Keep old name as alias
+async function henrikGet(path) {
+    return henrikGetWithTimeout(path);
 }
 
 async function fetchTeamId() {
@@ -302,11 +318,6 @@ window.closePremierCompPicker = function() {
 function renderPremierView() {
     const container = document.getElementById('premier-content');
     if (!container) return;
-
-    if (premierState.loading) {
-        container.innerHTML = `<div class="premier-loading"><div class="spinner"></div><p>Loading Premier data...</p></div>`;
-        return;
-    }
 
     const { total, byWeek } = calcPoints();
     const qualified = total >= PREMIER_CONFIG.qualifyThreshold;
@@ -494,7 +505,8 @@ window.saveApiKey = async function() {
     localStorage.removeItem('premier_team_id'); // force re-fetch team ID
     window.closeApiKeyModal();
     showToast('API key saved!', 'success');
-    await loadPremierData();
+    premierState.fetching = false; // allow a fresh fetch
+    fetchLiveData();
 };
 
 window.clearApiKey = function() {
@@ -516,4 +528,7 @@ window.initPremier = initPremier;
 window.showApiKeyModal = showApiKeyModal;
 window.openCompPickerForWeek = openCompPickerForWeek;
 window.unlinkCompFromWeek = unlinkCompFromWeek;
-window.refreshPremierData = loadPremierData;
+window.refreshPremierData = function() {
+    premierState.fetching = false; // reset guard so refresh always works
+    fetchLiveData();
+};
