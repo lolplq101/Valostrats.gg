@@ -481,6 +481,80 @@ input[type="text"]:focus, textarea:focus {
 
 .agent-slot {
     width: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: default;
+    position: relative;
+}
+
+/* ---- Secondary (alt) pick box ---- */
+.secondary-slot {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.18s;
+    flex-shrink: 0;
+}
+
+.secondary-slot:hover {
+    border-color: rgba(255, 70, 85, 0.55);
+    background: rgba(255, 70, 85, 0.08);
+}
+
+/* Targeted / awaiting pick */
+.secondary-slot--active {
+    border-color: var(--accent-red);
+    border-style: solid;
+    background: rgba(255, 70, 85, 0.12);
+    box-shadow: 0 0 10px rgba(255, 70, 85, 0.25);
+    animation: pulse-red 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 70, 85, 0.25); }
+    50%       { box-shadow: 0 0 16px rgba(255, 70, 85, 0.5); }
+}
+
+/* Filled secondary slot */
+.secondary-slot--filled {
+    border-style: solid;
+    border-color: rgba(255, 70, 85, 0.5);
+}
+
+.secondary-slot-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.secondary-slot-plus {
+    font-size: 1.3rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    transition: color 0.18s;
+}
+
+.secondary-slot:hover .secondary-slot-plus {
+    color: rgba(255, 70, 85, 0.7);
+}
+
+.secondary-slot--active .secondary-slot-plus {
+    color: var(--accent-red);
+}
+
+/* ---- Primary (main) pick box ---- */
+.primary-slot {
+    width: 64px;
     height: 64px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
@@ -490,26 +564,28 @@ input[type="text"]:focus, textarea:focus {
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
-    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
-.agent-slot:hover {
+.primary-slot:hover {
     border-color: var(--accent-red);
     background: rgba(255, 70, 85, 0.1);
 }
 
-.agent-slot img {
+.primary-slot img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 6px;
 }
 
-.agent-slot.filled {
+.agent-slot.filled .primary-slot {
     border-style: solid;
     border-color: var(--accent-red);
     box-shadow: 0 0 10px rgba(255, 70, 85, 0.3);
 }
+
 
 /* Agent Picker Sidebar */
 .agent-picker-sidebar {

@@ -22,10 +22,12 @@ const state = {
     maps: [],
     agents: [],
     currentMap: null,
-    currentComp: [null, null, null, null, null], // Array of Agent UUIDs
-    savedComps: [], // Now loaded from Firestore
-    filterRole: 'Duelist', // Default to Duelist
-    user: null // Current Firebase User
+    currentComp: [null, null, null, null, null],     // Primary picks
+    secondaryComp: [null, null, null, null, null],   // Secondary (alt) picks
+    activeSecondarySlot: null, // index of secondary slot being targeted, or null
+    savedComps: [],
+    filterRole: 'Duelist',
+    user: null
 };
 
 // Agent Costs Data
@@ -449,21 +451,72 @@ function renderAgentsPicker() {
 function renderSlots() {
     els.agentSlots.forEach((slot, index) => {
         const agentUuid = state.currentComp[index];
-        slot.innerHTML = ''; 
+        const secUuid  = state.secondaryComp[index];
+        slot.innerHTML = '';
         slot.classList.remove('filled');
         slot.onclick = null;
-        
+
+        // ---- Secondary pick box (rendered INSIDE the slot wrapper, above) ----
+        const secBox = document.createElement('div');
+        secBox.className = 'secondary-slot';
+        const isTargeted = state.activeSecondarySlot === index;
+        if (isTargeted) secBox.classList.add('secondary-slot--active');
+
+        if (secUuid) {
+            const secAgent = state.agents.find(a => a.uuid === secUuid);
+            if (secAgent) {
+                const img = document.createElement('img');
+                img.src = secAgent.displayIcon;
+                img.className = 'secondary-slot-img';
+                secBox.appendChild(img);
+                secBox.title = `Alt: ${secAgent.displayName} — click to clear`;
+                secBox.classList.add('secondary-slot--filled');
+                secBox.onclick = (e) => {
+                    e.stopPropagation();
+                    // Clear secondary pick
+                    state.secondaryComp[index] = null;
+                    state.activeSecondarySlot = null;
+                    renderSlots();
+                };
+            }
+        } else {
+            // Empty secondary — clicking targets this slot for next agent pick
+            const plus = document.createElement('span');
+            plus.textContent = '+';
+            plus.className = 'secondary-slot-plus';
+            secBox.appendChild(plus);
+            secBox.title = 'Click to set alt pick for this player';
+            secBox.onclick = (e) => {
+                e.stopPropagation();
+                // Toggle targeting: clicking again deselects
+                if (state.activeSecondarySlot === index) {
+                    state.activeSecondarySlot = null;
+                } else {
+                    state.activeSecondarySlot = index;
+                }
+                renderSlots(); // re-render to update highlight
+            };
+        }
+        slot.appendChild(secBox);
+
+        // ---- Primary agent slot ----
+        const primaryBox = document.createElement('div');
+        primaryBox.className = 'primary-slot';
+
         if (agentUuid) {
             const agent = state.agents.find(a => a.uuid === agentUuid);
             if (agent) {
                 const img = document.createElement('img');
                 img.src = agent.displayIcon;
-                slot.appendChild(img);
+                primaryBox.appendChild(img);
                 slot.classList.add('filled');
-                slot.onclick = () => updateSlot(index, null);
+                primaryBox.onclick = () => updateSlot(index, null);
             }
         }
-        
+
+        slot.appendChild(primaryBox);
+
+        // Drag-and-drop onto the primary area
         slot.ondragover = (e) => { e.preventDefault(); slot.style.borderColor = 'var(--text-primary)'; };
         slot.ondragleave = () => { slot.style.borderColor = ''; };
         slot.ondrop = (e) => {
@@ -659,6 +712,8 @@ function renderSavedComps() {
 function openBuilder(map) {
     state.currentMap = map;
     state.currentComp = [null, null, null, null, null];
+    state.secondaryComp = [null, null, null, null, null];
+    state.activeSecondarySlot = null;
     els.compNameInput.value = '';
     els.stratNotesInput.value = '';
     
@@ -671,15 +726,30 @@ function openBuilder(map) {
 }
 
 function addToFirstEmptySlot(uuid) {
+    // If a secondary slot is targeted, fill that first
+    if (state.activeSecondarySlot !== null) {
+        const idx = state.activeSecondarySlot;
+        // Don't allow same agent as primary in same slot
+        if (state.currentComp[idx] === uuid) {
+            showToast('Same agent is already the primary pick for this player', 'warning');
+            return;
+        }
+        state.secondaryComp[idx] = uuid;
+        state.activeSecondarySlot = null; // clear target — done
+        renderSlots();
+        return;
+    }
+
+    // Normal primary slot fill
     if (state.currentComp.includes(uuid)) {
-        alert("Agent already in composition!");
+        showToast('Agent already in composition!', 'warning');
         return;
     }
     const emptyIndex = state.currentComp.findIndex(s => s === null);
     if (emptyIndex !== -1) {
         updateSlot(emptyIndex, uuid);
     } else {
-        alert("Comp is full! Click an agent slot to remove one first.");
+        showToast('Comp is full! Click an agent to remove them first.', 'warning');
     }
 }
 
