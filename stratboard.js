@@ -44,9 +44,11 @@ function canvasRect()       { return canvas.getBoundingClientRect(); }
 function eventToCanvas(e) {
     const r = canvasRect();
     const touch = e.touches ? e.touches[0] : e;
+    // Return CSS-pixel coordinates within the canvas.
+    // The ctx.setTransform(dpr,...) takes care of mapping these to the buffer.
     return {
-        x: (touch.clientX - r.left) * (canvas.width  / r.width),
-        y: (touch.clientY - r.top)  * (canvas.height / r.height),
+        x: touch.clientX - r.left,
+        y: touch.clientY - r.top,
     };
 }
 
@@ -55,13 +57,18 @@ function calloutToCanvas(callout, map) {
     if (!map || !map.xMultiplier) return null;
     const nx = callout.location.x * map.xMultiplier + map.xScalarToAdd;
     const ny = callout.location.y * map.yMultiplier + map.yScalarToAdd;
-    return { x: nx * canvas.width, y: ny * canvas.height };
+    // Use CSS pixel dimensions (same space as drawing coords after ctx.setTransform)
+    const W = canvas.offsetWidth  || canvas.style.width.replace('px','') * 1  || 800;
+    const H = canvas.offsetHeight || canvas.style.height.replace('px','') * 1 || 600;
+    return { x: nx * W, y: ny * H };
 }
 
 // ---- Draw everything on the interactive canvas ----
 function render() {
     if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const W = canvas.offsetWidth  || parseInt(canvas.style.width)  || canvas.width;
+    const H = canvas.offsetHeight || parseInt(canvas.style.height) || canvas.height;
+    ctx.clearRect(0, 0, W, H);
 
     // Callout labels
     if (stratState.showCallouts && stratState.map?.callouts) {
@@ -202,63 +209,70 @@ function roundRect(c, x, y, w, h, r) {
 // ---- Map rendering (background canvas) ----
 function renderBackground() {
     if (!bgCtx || !bgCanvas) return;
-    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    // Work in CSS-pixel space (ctx is scaled by dpr via setTransform)
+    const W = bgCanvas.offsetWidth  || parseInt(bgCanvas.style.width)  || bgCanvas.width;
+    const H = bgCanvas.offsetHeight || parseInt(bgCanvas.style.height) || bgCanvas.height;
+
+    bgCtx.clearRect(0, 0, W, H);
 
     // Dark fill
     bgCtx.fillStyle = '#080c10';
-    bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+    bgCtx.fillRect(0, 0, W, H);
 
     if (mapImg && mapImg.complete && mapImg.naturalWidth > 0) {
-        bgCtx.globalAlpha = 0.85;
-        bgCtx.drawImage(mapImg, 0, 0, bgCanvas.width, bgCanvas.height);
+        bgCtx.globalAlpha = 0.88;
+        bgCtx.drawImage(mapImg, 0, 0, W, H);
         bgCtx.globalAlpha = 1;
 
         // Side-tint overlay
-        if (stratState.side === 'attack') {
-            bgCtx.fillStyle = 'rgba(255, 70, 85, 0.07)';
-        } else {
-            bgCtx.fillStyle = 'rgba(100, 150, 255, 0.07)';
-        }
-        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+        bgCtx.fillStyle = stratState.side === 'attack'
+            ? 'rgba(255, 70, 85, 0.07)'
+            : 'rgba(100, 150, 255, 0.07)';
+        bgCtx.fillRect(0, 0, W, H);
     } else {
         // Placeholder grid
         bgCtx.strokeStyle = 'rgba(255,255,255,0.05)';
         bgCtx.lineWidth = 1;
-        for (let x = 0; x < bgCanvas.width; x += 50) {
-            bgCtx.beginPath(); bgCtx.moveTo(x, 0); bgCtx.lineTo(x, bgCanvas.height); bgCtx.stroke();
+        for (let x = 0; x < W; x += 50) {
+            bgCtx.beginPath(); bgCtx.moveTo(x, 0); bgCtx.lineTo(x, H); bgCtx.stroke();
         }
-        for (let y = 0; y < bgCanvas.height; y += 50) {
-            bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(bgCanvas.width, y); bgCtx.stroke();
+        for (let y = 0; y < H; y += 50) {
+            bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(W, y); bgCtx.stroke();
         }
         bgCtx.fillStyle = 'rgba(255,255,255,0.15)';
         bgCtx.font = 'bold 20px "Oswald", sans-serif';
         bgCtx.textAlign = 'center';
-        bgCtx.fillText('Select a map to begin', bgCanvas.width / 2, bgCanvas.height / 2);
+        bgCtx.fillText('Select a map to begin', W / 2, H / 2);
     }
 }
 
-// ---- Resize canvas to fill its CSS container ----
+// ---- Resize canvas to fill its CSS container (no distortion) ----
 function resizeCanvases() {
     const wrapper = document.querySelector('.canvas-wrapper');
     if (!wrapper || !canvas || !bgCanvas) return;
 
     const W = wrapper.clientWidth;
     const H = wrapper.clientHeight;
+    if (W === 0 || H === 0) return;
 
-    // Keep a fixed internal resolution
-    const INTERNAL_W = 1024;
-    const INTERNAL_H = 768;
+    // Scale for high-DPI screens (retina etc.)
+    const dpr = window.devicePixelRatio || 1;
 
-    bgCanvas.width  = INTERNAL_W;
-    bgCanvas.height = INTERNAL_H;
-    canvas.width    = INTERNAL_W;
-    canvas.height   = INTERNAL_H;
+    // Internal buffer = actual CSS size × dpr → crisp on retina, no stretch
+    bgCanvas.width  = Math.round(W * dpr);
+    bgCanvas.height = Math.round(H * dpr);
+    canvas.width    = Math.round(W * dpr);
+    canvas.height   = Math.round(H * dpr);
 
-    // CSS — fill the wrapper
+    // CSS size stays at the layout size
     bgCanvas.style.width  = `${W}px`;
     bgCanvas.style.height = `${H}px`;
     canvas.style.width    = `${W}px`;
     canvas.style.height   = `${H}px`;
+
+    // Scale the drawing context so all coordinates stay in CSS-pixel space
+    bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     renderBackground();
     render();
