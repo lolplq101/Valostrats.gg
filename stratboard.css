@@ -236,20 +236,12 @@
     overflow: hidden;
 }
 
-#strat-canvas-bg,
 #strat-canvas {
     position: absolute;
     top: 0; left: 0;
-    border-radius: 0;
-}
-
-#strat-canvas-bg {
-    z-index: 1;
-    image-rendering: crisp-edges;
-}
-
-#strat-canvas {
-    z-index: 2;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
     cursor: crosshair;
 }
 

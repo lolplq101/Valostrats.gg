@@ -207,8 +207,9 @@
                 <!-- Canvas + Agent Tray -->
                 <div class="stratboard-body">
                     <div class="canvas-wrapper">
-                        <canvas id="strat-canvas-bg"></canvas>
-                        <canvas id="strat-canvas"></canvas>
+                        <img id="strat-map-img" alt="Map" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1;display:block;">
+                        <div id="map-side-tint" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;"></div>
+                        <canvas id="strat-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;"></canvas>
 
                         <div class="canvas-empty-msg" id="canvas-empty-msg">
                             <h3>Select a map to begin</h3>
