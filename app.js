@@ -163,7 +163,10 @@ const els = {
     attributesList: document.getElementById('attributes-list'),
     
     // Saved List
-    savedCompsList: document.getElementById('saved-comps-list')
+    savedCompsList: document.getElementById('saved-comps-list'),
+
+    // Strat Board
+    stratboardView: document.getElementById('stratboard-view')
 };
 
 // Initialization
@@ -200,6 +203,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         document.getElementById('feature-roster')?.addEventListener('click', () => {
             switchView('roster');
+        });
+
+        document.getElementById('feature-stratboard')?.addEventListener('click', () => {
+            switchView('stratboard');
         });
         
     } catch (err) {
@@ -702,12 +709,22 @@ function renderSavedComps() {
             deleteComp(comp.docId);
         };
 
+        const stratBtn = document.createElement('button');
+        stratBtn.className = 'open-stratboard-btn';
+        stratBtn.innerText = '🗺️ Strat';
+        stratBtn.title = 'Open on Strat Board';
+        stratBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (window.openStratBoard) window.openStratBoard(comp);
+        };
+
         const rightSide = document.createElement('div');
         rightSide.style.display = 'flex';
         rightSide.style.alignItems = 'center';
         rightSide.style.gap = '0.5rem';
         rightSide.appendChild(slotsDiv);
         rightSide.appendChild(shareBtn);
+        rightSide.appendChild(stratBtn);
         rightSide.appendChild(loadBtn);
         rightSide.appendChild(deleteBtn);
         
@@ -802,6 +819,7 @@ function switchView(viewName) {
     if (homeScreen) homeScreen.classList.add('hidden');
     if (mapBanView) mapBanView.classList.add('hidden');
     if (rosterView) rosterView.classList.add('hidden');
+    if (els.stratboardView) els.stratboardView.classList.add('hidden');
     
     // Reset button states (including dropdown items)
     const dropdownItems = document.querySelectorAll('.dropdown-item');
@@ -838,6 +856,16 @@ function switchView(viewName) {
         renderSavedComps();
         els.savedCompsView.classList.remove('hidden');
         els.viewSavedBtn.classList.add('active');
+    } else if (viewName === 'stratboard') {
+        if (els.stratboardView) {
+            els.stratboardView.classList.remove('hidden');
+            document.getElementById('view-stratboard-btn')?.classList.add('active');
+            // One-time init
+            if (!window._stratboardInited && window.initStratBoard) {
+                window._stratboardInited = true;
+                window.initStratBoard();
+            }
+        }
     }
 }
 
@@ -863,6 +891,9 @@ function setupEventListeners() {
     
     if (mapBanBtn) mapBanBtn.onclick = () => switchView('mapban');
     if (rosterBtn) rosterBtn.onclick = () => switchView('roster');
+
+    const stratboardBtn = document.getElementById('view-stratboard-btn');
+    if (stratboardBtn) stratboardBtn.onclick = () => switchView('stratboard');
     
     // Comp builder actions
     els.saveCompBtn.onclick = saveCurrentComp;
