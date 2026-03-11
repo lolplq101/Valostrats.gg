@@ -1,16 +1,36 @@
 /* Global Reset & Base Styles */
 :root {
-    --bg-primary: #0f1923; /* Valorant Dark Blue */
-    --bg-secondary: #1f2731; /* Lighter Panel Background */
-    --accent-red: #ff4655; /* Valorant Red */
-    --accent-dark-red: #bd3944;
-    --text-primary: #ece8e1; /* Off-white */
-    --text-secondary: #768079; /* Gray */
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    /* Core palette */
+    --bg-primary:      #0d1117;
+    --bg-secondary:    #161b22;
+    --bg-surface:      #1c232d;
+    --accent-red:      #ff4655;
+    --accent-dark-red: #c7303d;
+    --accent-glow:     rgba(255, 70, 85, 0.35);
+
+    /* Text */
+    --text-primary:   #ece8e1;
+    --text-secondary: #8892a4;
+    --text-muted:     #4a5568;
+
+    /* Surfaces */
+    --glass-bg:     rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-red:  0 8px 32px rgba(255, 70, 85, 0.25);
+
+    /* Fonts */
     --font-heading: 'Oswald', sans-serif;
-    --font-body: 'Outfit', sans-serif;
+    --font-body:    'Outfit', sans-serif;
+
+    /* Card accent colours */
+    --card-1: #ff4655;  /* red   — Map Comps   */
+    --card-2: #f5a623;  /* amber — Map Bans    */
+    --card-3: #50e3c2;  /* teal  — Team Roster */
+    --card-4: #7b61ff;  /* purple — Strat Board */
 }
 
 * {
@@ -21,6 +41,10 @@
 
 body {
     background-color: var(--bg-primary);
+    /* Subtle dot-grid texture */
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
     color: var(--text-primary);
     font-family: var(--font-body);
     overflow-x: hidden;
@@ -41,39 +65,39 @@ h1, h2, h3, h4, button {
 
 /* Header */
 .app-header {
-    background: rgba(15, 25, 35, 0.95);
-    border-bottom: 1px solid var(--accent-red);
-    padding: 1rem 2rem;
+    background: rgba(13, 17, 23, 0.92);
+    border-bottom: 1px solid rgba(255, 70, 85, 0.3);
+    padding: 0.85rem 2rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     position: sticky;
     top: 0;
     z-index: 100;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--accent-red);
-    letter-spacing: 2px;
+    /* Subtle red gradient underline */
+    box-shadow: 0 1px 0 rgba(255,70,85,0.15), 0 2px 20px rgba(0,0,0,0.4);
 }
 
 .nav-btn {
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 0.82rem;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    margin-left: 1rem;
-    transition: color 0.3s, transform 0.2s;
+    margin-left: 0.25rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    transition: color 0.2s, background 0.2s;
 }
 
 .nav-btn:hover, .nav-btn.active {
     color: var(--text-primary);
-    transform: translateY(-2px);
-    text-shadow: 0 0 8px rgba(255, 70, 85, 0.5);
+    background: rgba(255, 255, 255, 0.07);
 }
 
 /* View Sections */
@@ -95,84 +119,132 @@ h1, h2, h3, h4, button {
 /* Maps Grid */
 #maps-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
     padding: 2rem;
 }
 
 .map-card {
     background: var(--bg-secondary);
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s, border-color 0.3s;
-    border: 2px solid transparent;
+    transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.38s, border-color 0.25s;
+    border: 1px solid var(--glass-border);
 }
 
 .map-card:hover {
-    transform: translateY(-15px) scale(1.05);
-    box-shadow: 0 20px 40px rgba(255, 70, 85, 0.4), 0 0 30px rgba(255, 70, 85, 0.2);
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent-red), 0 0 30px var(--accent-glow);
     border-color: var(--accent-red);
     z-index: 10;
 }
 
 .map-card img {
     width: 100%;
-    height: 240px;
+    height: 220px;
     object-fit: cover;
     display: block;
-    filter: brightness(0.75) contrast(1.1);
+    filter: brightness(0.7) contrast(1.1) saturate(0.85);
     transition: filter 0.4s, transform 0.4s;
 }
 
 .map-card:hover img {
-    filter: brightness(1.2) contrast(1.2);
-    transform: scale(1.1);
+    filter: brightness(1.1) contrast(1.15) saturate(1.1);
+    transform: scale(1.08);
 }
 
-.map-card-name {
-    padding: 1.25rem;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
+/* Corner accent lines on hover */
+.map-card::before, .map-card::after {
+    content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
+    width: 18px;
+    height: 18px;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.map-card::before {
+    top: 8px; left: 8px;
+    border-top: 2px solid var(--accent-red);
+    border-left: 2px solid var(--accent-red);
+}
+.map-card::after {
+    bottom: 8px; right: 8px;
+    border-bottom: 2px solid var(--accent-red);
+    border-right: 2px solid var(--accent-red);
+}
+.map-card:hover::before,
+.map-card:hover::after { opacity: 1; }
+
+.map-card-name {
+    padding: 1rem 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    letter-spacing: 0.08em;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.92) 100%);
+    position: absolute;
+    bottom: 0; left: 0;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
-/* Home Screen */
+.map-card-name::after {
+    content: 'BUILD →';
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--accent-red);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.25s, transform 0.25s;
+}
+.map-card:hover .map-card-name::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ===== HOME SCREEN ===== */
 .hero-section {
     text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(255, 70, 85, 0.1) 0%, 
-        rgba(0, 0, 0, 0.3) 50%,
-        rgba(255, 70, 85, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
+    padding: 5rem 2rem 4rem;
+    background:
+        linear-gradient(160deg,
+            rgba(255, 70, 85, 0.08) 0%,
+            rgba(13, 17, 23, 0)     40%,
+            rgba(123, 97, 255, 0.06) 100%);
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
     margin-bottom: 3rem;
     position: relative;
     overflow: hidden;
 }
 
+/* Diagonal grid accent lines */
 .hero-section::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 70, 85, 0.1) 0%, transparent 70%);
-    animation: pulse 8s ease-in-out infinite;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,70,85,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,70,85,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.1); opacity: 0.8; }
+/* Bottom gradient fade over grid */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, var(--bg-primary), transparent);
+    pointer-events: none;
 }
 
 .hero-content {
@@ -181,108 +253,169 @@ h1, h2, h3, h4, button {
 }
 
 .hero-title {
-    font-family: 'Tungsten', sans-serif;
-    font-size: 5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
     font-weight: 700;
-    color: var(--accent-red);
-    text-shadow: 0 0 20px rgba(255, 70, 85, 0.5);
-    margin-bottom: 1rem;
-    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, #fff 0%, #ff4655 55%, #c7303d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.08em;
+    animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Glowing divider */
+.hero-divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+    margin: 1.25rem auto;
+    border-radius: 2px;
+    box-shadow: 0 0 12px var(--accent-glow);
+    animation: heroFadeUp 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.12em;
+    animation: heroFadeUp 0.7s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .hero-description {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
-    max-width: 600px;
+    max-width: 520px;
     margin: 0 auto;
-    line-height: 1.6;
+    line-height: 1.7;
+    animation: heroFadeUp 0.7s 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section label above features */
+.section-eyebrow {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+/* ===== FEATURE CARDS ===== */
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .feature-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    background: var(--bg-secondary);
     border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 2rem;
+    border-radius: 14px;
+    padding: 2rem 1.75rem;
     text-align: center;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 0.3s, border-color 0.3s;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
 }
 
+/* Top accent bar — uses per-card colour variable */
 .feature-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--accent-red), transparent);
-    transform: scaleX(0);
-    transition: transform 0.3s;
-}
-
-.feature-card:hover::before {
-    transform: scaleX(1);
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, var(--accent-red));
+    border-radius: 14px 14px 0 0;
+    opacity: 0.6;
+    transition: opacity 0.3s;
 }
 
 .feature-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--accent-red);
-    box-shadow: 0 12px 30px rgba(255, 70, 85, 0.3);
-    background: linear-gradient(135deg, rgba(255, 70, 85, 0.1), rgba(255, 255, 255, 0.05));
+    transform: translateY(-10px) rotateX(2deg);
+    border-color: var(--card-color, var(--accent-red));
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4),
+                0 0 0 1px var(--card-color, var(--accent-red)),
+                0 0 30px rgba(0,0,0,0.2);
 }
 
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+/* Styled icon container */
 .feature-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 1.8rem;
+    transition: transform 0.3s, background 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+    background: rgba(255,255,255,0.08);
 }
 
 .feature-card h2 {
-    font-family: 'Tungsten', sans-serif;
-    font-size: 2rem;
+    font-size: 1.4rem;
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.06em;
 }
 
+/* Divider between text and button */
 .feature-card p {
     color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.65;
     margin-bottom: 1.5rem;
-    line-height: 1.6;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
+/* Ghost button — hollow → fills on hover */
 .feature-btn {
-    background: var(--accent-red);
-    color: white;
-    border: none;
-    padding: 0.75rem 2rem;
+    display: inline-block;
+    background: transparent;
+    color: var(--card-color, var(--accent-red));
+    border: 1px solid var(--card-color, var(--accent-red));
+    padding: 0.6rem 1.5rem;
     border-radius: 6px;
     font-weight: 600;
+    font-family: var(--font-heading);
+    letter-spacing: 0.08em;
+    font-size: 0.82rem;
     cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
+    transition: background 0.25s, color 0.25s, box-shadow 0.25s;
 }
 
 .feature-btn:hover {
-    background: #e63946;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(255, 70, 85, 0.4);
+    background: var(--card-color, var(--accent-red));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
 /* Builder Layout */
