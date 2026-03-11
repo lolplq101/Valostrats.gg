@@ -218,85 +218,108 @@
 
 /* ---- Coin Toss Phase ---- */
 .mapban-cointoss {
-    max-width: 640px;
+    max-width: 900px;
     margin: 0 auto;
-    text-align: center;
 }
 
-.mapban-cointoss h2 {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    color: var(--text-primary);
-    margin-bottom: 2rem;
-    letter-spacing: 0.08em;
-}
-
-.cointoss-container {
-    background: var(--bg-secondary);
+/* Two-column split */
+.cointoss-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
     border-radius: 16px;
-    padding: 3.5rem 2rem;
+    overflow: hidden;
     border: 1px solid var(--glass-border);
-    background-image:
-        linear-gradient(rgba(255,70,85,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,70,85,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    position: relative;
-    overflow: visible; /* allow coin to arc above */
-    /* Ambient glow ring that pulses when coin is flipping */
-    transition: box-shadow 0.3s;
+    min-height: 420px;
 }
 
+/* LEFT panel — coin lives here */
+.cointoss-left {
+    background: var(--bg-secondary);
+    background-image:
+        linear-gradient(rgba(255,215,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,215,0,0.03) 1px, transparent 1px);
+    background-size: 36px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    border-right: 1px solid var(--glass-border);
+    position: relative;
+}
+
+/* Ambient glow behind left panel */
+.cointoss-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 200px at 50% 50%, rgba(255,215,0,0.06), transparent 70%);
+    pointer-events: none;
+}
+
+/* RIGHT panel — controls */
+.cointoss-right {
+    background: var(--bg-primary);
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cointoss-right h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--text-primary);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+}
+
+.cointoss-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Coin — 240px, fills left panel nicely */
 .coin {
-    width: 130px;
-    height: 130px;
-    margin: 0 auto;
+    width: 240px;
+    height: 240px;
     position: relative;
     transform-style: preserve-3d;
     border-radius: 50%;
     box-shadow:
-        0 0 0 3px rgba(255,215,0,0.2),
-        0 0 20px rgba(255,215,0,0.12),
-        0 8px 24px rgba(0,0,0,0.5);
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.5s;
-    z-index: 2;
+        0 0 0 4px rgba(255,215,0,0.2),
+        0 0 32px rgba(255,215,0,0.15),
+        0 16px 48px rgba(0,0,0,0.5);
+    /* will-change tells browser to composite this on its own layer */
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Dedicated stage for the coin — fixed height so nothing shifts */
+/* coin-stage just centers within the left panel */
 .coin-stage {
-    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    margin-bottom: 1.5rem;
-    /* Subtle spotlight behind coin */
-    background: radial-gradient(circle 100px at 50% 50%, rgba(255,215,0,0.07), transparent 70%);
-    border-radius: 12px;
+    z-index: 1;
 }
 
+/* GPU-only animation — NO filter, NO blur */
 .coin.flipping {
-    animation:
-        coinFlip  0.95s cubic-bezier(0.22, 1, 0.36, 1) both,
-        coinGlow  0.95s ease-in-out both;
+    animation: coinFlip 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Single keyframe — rotateY + translateY must be in the same animation */
 @keyframes coinFlip {
-    0%   { transform: translateY(0px)    rotateY(0deg)    rotateZ(0deg);   filter: none; }
-    15%  { transform: translateY(-40px)  rotateY(360deg)  rotateZ(-4deg);  filter: blur(0.5px) brightness(1.2); }
-    35%  { transform: translateY(-90px)  rotateY(1260deg) rotateZ(2deg);   filter: blur(1px) brightness(1.5); }
-    60%  { transform: translateY(-50px)  rotateY(2160deg) rotateZ(-2deg);  filter: blur(0.5px) brightness(1.3); }
-    82%  { transform: translateY(-6px)   rotateY(2700deg) rotateZ(1deg);   filter: none; }
-    92%  { transform: translateY(10px)   rotateY(2820deg) rotateZ(0deg);   filter: none; }
-    100% { transform: translateY(0px)    rotateY(2880deg) rotateZ(0deg);   filter: none; }
-}
-
-/* Glow pulses at the apex */
-@keyframes coinGlow {
-    0%   { box-shadow: 0 0 0 3px rgba(255,215,0,0.2),  0 0 20px rgba(255,215,0,0.12), 0 8px 24px rgba(0,0,0,0.5); }
-    35%  { box-shadow: 0 0 0 8px rgba(255,215,0,0.35), 0 0 60px rgba(255,215,0,0.5),  0 4px 16px rgba(0,0,0,0.3); }
-    65%  { box-shadow: 0 0 0 5px rgba(255,215,0,0.25), 0 0 40px rgba(255,215,0,0.3),  0 6px 20px rgba(0,0,0,0.4); }
-    100% { box-shadow: 0 0 0 3px rgba(255,215,0,0.2),  0 0 20px rgba(255,215,0,0.12), 0 8px 24px rgba(0,0,0,0.5); }
+    0%   { transform: rotateY(0deg)    rotateZ(0deg);  }
+    20%  { transform: rotateY(720deg)  rotateZ(-3deg); }
+    50%  { transform: rotateY(1980deg) rotateZ(2deg);  }
+    80%  { transform: rotateY(2700deg) rotateZ(-1deg); }
+    92%  { transform: rotateY(2840deg) rotateZ(0.5deg);}
+    100% { transform: rotateY(2880deg) rotateZ(0deg);  }
 }
 
 .coin-side {
@@ -307,27 +330,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     font-weight: 700;
+    font-family: var(--font-heading);
+    letter-spacing: 0.1em;
     backface-visibility: hidden;
 }
 
 .coin-side.heads {
     background: linear-gradient(135deg, #f5d060, #e8a000, #c87000);
     color: #3a2000;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+    box-shadow: inset 0 3px 8px rgba(255,255,255,0.35);
 }
 
 .coin-side.tails {
     background: linear-gradient(135deg, #d0d8e0, #8898aa, #5a6a7a);
     color: #1a2030;
     transform: rotateY(180deg);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+    box-shadow: inset 0 3px 8px rgba(255,255,255,0.2);
 }
 
 .cointoss-choice, .cointoss-heads-tails, .cointoss-result {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
+
 
 .cointoss-choice p, .cointoss-heads-tails p, .cointoss-result p {
     font-size: 1.1rem;

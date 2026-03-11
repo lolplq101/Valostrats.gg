@@ -317,32 +317,43 @@
 
                 <!-- Coin Toss Phase -->
                 <div id="mapban-cointoss" class="mapban-cointoss hidden">
-                    <h2>Coin Toss</h2>
-                    <div class="cointoss-container">
-                        <div class="coin-stage">
-                            <div class="coin" id="coin-flip">
-                                <div class="coin-side heads">HEADS</div>
-                                <div class="coin-side tails">TAILS</div>
+                    <div class="cointoss-split">
+
+                        <!-- LEFT: Big coin -->
+                        <div class="cointoss-left">
+                            <div class="coin-stage">
+                                <div class="coin" id="coin-flip">
+                                    <div class="coin-side heads">HEADS</div>
+                                    <div class="coin-side tails">TAILS</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="cointoss-choice">
-                            <p>Which team calls it?</p>
-                            <button class="team-btn" id="call-team-a">Team A</button>
-                            <button class="team-btn" id="call-team-b">Team B</button>
-                        </div>
-                        <div class="cointoss-heads-tails hidden" id="heads-tails-choice">
-                            <p id="calling-team-text">Team A calls:</p>
-                            <button class="choice-btn" data-choice="heads">Heads</button>
-                            <button class="choice-btn" data-choice="tails">Tails</button>
-                        </div>
-                        <div class="cointoss-result hidden" id="cointoss-result">
-                            <p id="result-text"></p>
-                            <div class="turn-choice">
-                                <p id="winner-text">Winner chooses:</p>
-                                <button class="choice-btn" id="go-first">Go First</button>
-                                <button class="choice-btn" id="go-second">Go Second</button>
+
+                        <!-- RIGHT: Controls -->
+                        <div class="cointoss-right">
+                            <h2>Coin Toss</h2>
+                            <p class="cointoss-subtitle">Decide who picks first</p>
+
+                            <div class="cointoss-choice">
+                                <p>Which team calls it?</p>
+                                <button class="team-btn" id="call-team-a">Team A</button>
+                                <button class="team-btn" id="call-team-b">Team B</button>
+                            </div>
+                            <div class="cointoss-heads-tails hidden" id="heads-tails-choice">
+                                <p id="calling-team-text">Team A calls:</p>
+                                <button class="choice-btn" data-choice="heads">Heads</button>
+                                <button class="choice-btn" data-choice="tails">Tails</button>
+                            </div>
+                            <div class="cointoss-result hidden" id="cointoss-result">
+                                <p id="result-text"></p>
+                                <div class="turn-choice">
+                                    <p id="winner-text">Winner chooses:</p>
+                                    <button class="choice-btn" id="go-first">Go First</button>
+                                    <button class="choice-btn" id="go-second">Go Second</button>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
