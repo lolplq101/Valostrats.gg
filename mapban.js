@@ -14,7 +14,7 @@ const mapBanState = {
     banSequence: [], // Array of {type: 'ban'|'pick', team: 0|1}
     mapStates: {}, // {mapId: {status: 'available'|'banned'|'picked', team: 0|1, side: 'attack'|'defense'}}
     availableMaps: [],
-    competitiveMaps: ['Abyss', 'Ascent', 'Bind', 'Haven', 'Lotus', 'Split', 'Sunset'], // Common comp pool
+    competitiveMaps: ['Bind', 'Breeze', 'Fracture', 'Haven', 'Lotus', 'Pearl', 'Split'], // Common comp pool
     coinHistory: [] // Track last 10 flips for balancing
 };
 
