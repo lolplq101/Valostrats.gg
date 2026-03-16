@@ -52,12 +52,7 @@ const mapBanEls = {
     currentAction: document.getElementById('current-action'),
     mapBanGrid: document.getElementById('mapban-maps-grid'),
     resetBtn: document.getElementById('reset-ban-btn'),
-    summaryTeamA: document.getElementById('summary-team-a'),
-    summaryTeamB: document.getElementById('summary-team-b'),
-    teamABans: document.getElementById('team-a-bans'),
-    teamAPicks: document.getElementById('team-a-picks'),
-    teamBBans: document.getElementById('team-b-bans'),
-    teamBPicks: document.getElementById('team-b-picks'),
+    draftTracker: document.getElementById('draft-tracker'),
     
     // Side Selection
     sideModal: document.getElementById('side-selection-modal'),
@@ -351,9 +346,8 @@ function showBanPhase() {
     mapBanEls.coinToss.classList.add('hidden');
     mapBanEls.banPhase.classList.remove('hidden');
     
-    // Update summary headers
-    mapBanEls.summaryTeamA.textContent = mapBanState.teamA;
-    mapBanEls.summaryTeamB.textContent = mapBanState.teamB;
+    // Render the initial empty draft slots
+    renderDraftTracker();
     
     renderMapBanGrid();
     updateTurnIndicator();
@@ -430,7 +424,7 @@ function handleMapSelection(mapName) {
     } else {
         advanceTurn();
         renderMapBanGrid();
-        updateSummary();
+        updateDraftTrackerVisuals();
     }
 }
 
@@ -441,7 +435,7 @@ function selectSide(side) {
     
     advanceTurn();
     renderMapBanGrid();
-    updateSummary();
+    updateDraftTrackerVisuals();
 }
 
 function getCurrentStepIndex() {
@@ -478,29 +472,127 @@ function updateTurnIndicator() {
     mapBanEls.currentAction.textContent = action;
 }
 
-function updateSummary() {
+function renderDraftTracker() {
+    mapBanEls.draftTracker.innerHTML = `
+        <div class="draft-team" id="draft-team-a">
+            <h4 class="draft-team-name team-a">${mapBanState.teamA}</h4>
+            <div class="draft-slots" id="slots-team-a"></div>
+        </div>
+        <div class="draft-decider hidden" id="draft-decider">
+            <h4>Decider</h4>
+            <div class="draft-slot decider empty" id="slot-decider"></div>
+        </div>
+        <div class="draft-team" id="draft-team-b">
+            <h4 class="draft-team-name team-b">${mapBanState.teamB}</h4>
+            <div class="draft-slots" id="slots-team-b"></div>
+        </div>
+    `;
+
+    const slotsTeamA = document.getElementById('slots-team-a');
+    const slotsTeamB = document.getElementById('slots-team-b');
+    
+    // Create slots based on the ban sequence
+    mapBanState.banSequence.forEach((step, index) => {
+        const slot = document.createElement('div');
+        slot.className = `draft-slot empty ${step.type}`;
+        slot.dataset.index = index;
+        
+        const label = document.createElement('span');
+        label.className = 'slot-label';
+        label.textContent = step.type.toUpperCase();
+        slot.appendChild(label);
+        
+        if (step.team === 0) slotsTeamA.appendChild(slot);
+        else slotsTeamB.appendChild(slot);
+    });
+}
+
+function updateDraftTrackerVisuals() {
+    let stepIndex = 0;
+    
+    // We iterate through the chronological sequence.
+    // However, map states are an object mapName -> {status, team, side}.
+    // We need to map the chronologically picked/banned maps to the slots.
+    
+    // This requires reconstructing the chronological history of picks/bans.
+    // We didn't explicitly store chronological history in mapBanState.
+    // For now, we'll try to match by team and type (ban/pick).
+    
     const teamABans = [];
     const teamAPicks = [];
     const teamBBans = [];
     const teamBPicks = [];
+    let deciderMap = null;
     
     for (let mapName in mapBanState.mapStates) {
-        const mapState = mapBanState.mapStates[mapName];
-        
-        if (mapState.status === 'banned') {
-            if (mapState.team === 0) teamABans.push(mapName);
+        const ms = mapBanState.mapStates[mapName];
+        if (ms.status === 'banned') {
+            if (ms.team === 0) teamABans.push(mapName);
             else teamBBans.push(mapName);
-        } else if (mapState.status === 'picked') {
-            const pickText = mapState.side ? `${mapName} (${mapState.side === 'attack' ? '⚔️' : '🛡️'})` : mapName;
-            if (mapState.team === 0) teamAPicks.push(pickText);
-            else teamBPicks.push(pickText);
+        } else if (ms.status === 'picked') {
+            if (ms.team === 0) teamAPicks.push(mapName);
+            else teamBPicks.push(mapName);
         }
     }
     
-    mapBanEls.teamABans.innerHTML = teamABans.map(m => `<div class="summary-item">${m}</div>`).join('') || '<em>None</em>';
-    mapBanEls.teamAPicks.innerHTML = teamAPicks.map(m => `<div class="summary-item">${m}</div>`).join('') || '<em>None</em>';
-    mapBanEls.teamBBans.innerHTML = teamBBans.map(m => `<div class="summary-item">${m}</div>`).join('') || '<em>None</em>';
-    mapBanEls.teamBPicks.innerHTML = teamBPicks.map(m => `<div class="summary-item">${m}</div>`).join('') || '<em>None</em>';
+    // If ban sequence is finished, find the remaining available map (Decider)
+    if (getCurrentStepIndex() >= mapBanState.banSequence.length) {
+        const available = Object.keys(mapBanState.mapStates).filter(m => mapBanState.mapStates[m].status === 'available');
+        if (available.length === 1) deciderMap = available[0];
+    }
+
+    const slotsTeamA = document.getElementById('slots-team-a').children;
+    const slotsTeamB = document.getElementById('slots-team-b').children;
+    
+    // Fill Team A slots
+    let aBanIdx = 0, aPickIdx = 0;
+    Array.from(slotsTeamA).forEach(slot => {
+        const type = slot.classList.contains('ban') ? 'ban' : 'pick';
+        const mapName = type === 'ban' ? teamABans[aBanIdx] : teamAPicks[aPickIdx];
+        
+        if (mapName) {
+            fillSlot(slot, mapName, type, 0);
+            if (type === 'ban') aBanIdx++; else aPickIdx++;
+        }
+    });
+    
+    // Fill Team B slots
+    let bBanIdx = 0, bPickIdx = 0;
+    Array.from(slotsTeamB).forEach(slot => {
+        const type = slot.classList.contains('ban') ? 'ban' : 'pick';
+        const mapName = type === 'ban' ? teamBBans[bBanIdx] : teamBPicks[bPickIdx];
+        
+        if (mapName) {
+            fillSlot(slot, mapName, type, 1);
+            if (type === 'ban') bBanIdx++; else bPickIdx++;
+        }
+    });
+    
+    // Fill Decider
+    if (deciderMap) {
+        document.getElementById('draft-decider').classList.remove('hidden');
+        fillSlot(document.getElementById('slot-decider'), deciderMap, 'decider', null);
+    }
+}
+
+function fillSlot(slot, mapName, type, team) {
+    slot.classList.remove('empty');
+    const mapData = state.maps.find(m => m.displayName === mapName);
+    
+    // Use the side if picked
+    const ms = mapBanState.mapStates[mapName];
+    let sideText = '';
+    if (ms && ms.side) {
+        sideText = ms.side === 'attack' ? '<div class="slot-side slot-atk">⚔️ ATK</div>' : '<div class="slot-side slot-def">🛡️ DEF</div>';
+    }
+
+    slot.innerHTML = `
+        <img src="${mapData ? mapData.splash : ''}" class="slot-bg ${type}">
+        <div class="slot-overlay ${type}"></div>
+        <span class="slot-map-name">${mapName}</span>
+        ${sideText}
+        <div class="slot-icon ${type}">${type === 'ban' ? '✕' : (type === 'pick' ? '✓' : '★')}</div>
+    `;
 }
 
 function resetMapBan() {
@@ -537,11 +629,8 @@ function resetMapBan() {
     mapBanEls.sideModal.classList.add('hidden');
     mapBanEls.sideModal.dataset.mapName = '';
     
-    // Clear summaries
-    mapBanEls.teamABans.innerHTML = '<em>None</em>';
-    mapBanEls.teamAPicks.innerHTML = '<em>None</em>';
-    mapBanEls.teamBBans.innerHTML = '<em>None</em>';
-    mapBanEls.teamBPicks.innerHTML = '<em>None</em>';
+    // Clear tracker
+    mapBanEls.draftTracker.innerHTML = '';
 }
 
 // Export for app.js

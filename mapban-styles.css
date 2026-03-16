@@ -570,98 +570,182 @@
     border: 1px solid rgba(80, 227, 194, 0.5);
 }
 
-/* ---- Ban Summary / Results ---- */
-.ban-summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-.team-summary {
-    background: var(--bg-secondary);
-    padding: 1.5rem;
-    border-radius: 14px;
-    border: 1px solid var(--glass-border);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Team-coloured top border */
-.team-summary:first-child::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--accent-red);
-    border-radius: 14px 14px 0 0;
-}
-
-.team-summary:last-child::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: #50e3c2;
-    border-radius: 14px 14px 0 0;
-}
-
-.team-summary h4 {
-    font-size: 1.3rem;
-    letter-spacing: 0.08em;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.bans-list, .picks-list {
-    margin-top: 1rem;
-}
-
-.bans-list::before {
-    content: '✕ BANNED';
-    display: block;
-    font-family: var(--font-heading);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--accent-red);
-    opacity: 0.8;
-}
-
-.picks-list::before {
-    content: '✓ PICKED';
-    display: block;
-    font-family: var(--font-heading);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #50e3c2;
-    opacity: 0.8;
-}
-
-.summary-item {
-    padding: 0.4rem 0.75rem;
-    margin: 0.3rem 0;
-    border-radius: 6px;
-    font-size: 0.88rem;
+/* ---- Draft Tracker (Esports Broadcast Style) ---- */
+.draft-tracker {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: var(--surface-2);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.draft-team {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+#draft-team-a { align-items: flex-start; }
+#draft-team-b { align-items: flex-end; }
+
+.draft-team-name {
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+}
+.draft-team-name.team-a { color: var(--accent-red); }
+.draft-team-name.team-b { color: #50e3c2; }
+
+.draft-slots {
+    display: flex;
     gap: 0.5rem;
 }
 
-.bans-list .summary-item {
-    background: rgba(255, 70, 85, 0.08);
-    border: 1px solid rgba(255, 70, 85, 0.15);
-    color: var(--text-secondary);
+.draft-decider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1.5rem;
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
 }
 
-.picks-list .summary-item {
-    background: rgba(80, 227, 194, 0.08);
-    border: 1px solid rgba(80, 227, 194, 0.15);
-    color: var(--text-secondary);
+.draft-decider h4 {
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+    text-transform: uppercase;
 }
+
+/* Individual Slot */
+.draft-slot {
+    width: 140px;
+    height: 80px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid var(--glass-border);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.draft-slot.empty {
+    border-style: dashed;
+}
+
+.draft-slot.ban { border-top-color: var(--accent-red); }
+.draft-slot.pick { border-top-color: #50e3c2; }
+.draft-slot.decider { border-top-color: #e8a000; }
+
+.slot-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* Filled Slot Content */
+.slot-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.slot-bg.ban {
+    filter: grayscale(100%) brightness(0.6) contrast(1.2);
+}
+
+.slot-bg.pick, .slot-bg.decider {
+    filter: brightness(0.9) saturate(1.2);
+}
+
+.slot-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.slot-overlay.ban {
+    background: linear-gradient(180deg, rgba(255,70,85,0.2) 0%, rgba(40,10,10,0.95) 100%);
+}
+
+.slot-overlay.pick {
+    background: linear-gradient(180deg, rgba(80,227,194,0.1) 0%, rgba(10,40,30,0.95) 100%);
+}
+
+.slot-overlay.decider {
+    background: linear-gradient(180deg, rgba(232,160,0,0.1) 0%, rgba(40,30,10,0.95) 100%);
+}
+
+.slot-map-name {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    z-index: 3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+#draft-team-b .slot-map-name {
+    left: auto;
+    right: 0.5rem;
+}
+
+.slot-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-family: var(--font-heading);
+    z-index: 4;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.slot-icon.ban { color: var(--accent-red); }
+.slot-icon.pick { color: #50e3c2; }
+.slot-icon.decider { color: #e8a000; opacity: 0.3; }
+
+.slot-side {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    z-index: 5;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(2px);
+}
+#draft-team-b .slot-side {
+    right: auto;
+    left: 0.4rem;
+}
+
+.slot-atk { color: var(--accent-red); border: 1px solid rgba(255,70,85,0.4); }
+.slot-def { color: #50e3c2; border: 1px solid rgba(80,227,194,0.4); }
+
 
 /* ---- Side Selection Modal ---- */
 .modal {
