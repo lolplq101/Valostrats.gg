@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. User Profiles & Private Data (Comps, Roster, Premier links)
+    // Only the logged-in user can read or overwrite their own data
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 2. Stratboards (Tactical map drawings)
+    // Users can only create and access stratboards they own
+    match /stratboards/{stratboardId} {
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+
+    // 3. Shared Comps (The 4-character codes)
+    // Anyone can read a shared comp. Only logged-in users can create them.
+    match /shared_comps/{codeId} {
+      allow read: if true; 
+      allow create: if request.auth != null;
+      allow update, delete: if false; 
+    }
+    
+    // 4. Teams (Collaborative groups)
+    // Any logged-in player can create, read, or update team data to join/leave.
+    match /teams/{teamId} {
+      allow read, write: if request.auth != null; 
+    }
+  }
+}
