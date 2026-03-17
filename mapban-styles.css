@@ -383,15 +383,15 @@
 
 /* ---- Ban / Pick Phase ---- */
 .mapban-phase {
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
 }
 
 .mapban-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
     /* Gradient underline matching site header */
     border-bottom: none;
     box-shadow: 0 1px 0 rgba(255,70,85,0.25);
@@ -424,14 +424,14 @@
 /* ---- Map grid during ban phase ---- */
 .mapban-maps-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1.25rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
-@media (max-width: 1400px) { .mapban-maps-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 1024px) { .mapban-maps-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 640px)  { .mapban-maps-grid { grid-template-columns: repeat(2, 1fr); gap: 0.85rem; } }
+@media (max-width: 1024px) { .mapban-maps-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px)  { .mapban-maps-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px)  { .mapban-maps-grid { grid-template-columns: repeat(2, 1fr); gap: 0.85rem; } }
 
 .mapban-card {
     position: relative;
@@ -573,14 +573,14 @@
 /* ---- Draft Tracker (Esports Broadcast Style) ---- */
 .draft-tracker {
     display: flex;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-    padding: 1.5rem;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
     background: var(--surface-2);
     border-radius: 12px;
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 
 .draft-team {
@@ -590,8 +590,8 @@
     flex: 1;
 }
 
-#draft-team-a { align-items: flex-start; }
-#draft-team-b { align-items: flex-end; }
+#draft-team-a { align-items: flex-end; }
+#draft-team-b { align-items: flex-start; }
 
 .draft-team-name {
     font-size: 1.25rem;
@@ -626,8 +626,8 @@
 
 /* Individual Slot */
 .draft-slot {
-    width: 140px;
-    height: 80px;
+    width: 100px;
+    height: 60px;
     background: rgba(0,0,0,0.5);
     border: 2px solid var(--glass-border);
     border-radius: 8px;
@@ -637,6 +637,13 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+}
+
+.slot-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
 }
 
 .draft-slot.empty {
