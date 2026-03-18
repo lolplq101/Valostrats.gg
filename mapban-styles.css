@@ -409,6 +409,10 @@
     color: var(--text-secondary);
     font-family: var(--font-heading);
     letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .turn-indicator span {
@@ -852,6 +856,54 @@
 }
 
 .primary-btn:hover {
-    background: var(--accent-dark-red);
-    box-shadow: 0 4px 16px rgba(255,70,85,0.35);
+    background: white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    color: var(--accent-red);
+}
+
+/* ==== Fullscreen Turn Announcer ==== */
+.turn-announcer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(13, 17, 23, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+}
+
+.turn-announcer-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.turn-announcer-content {
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.turn-announcer-overlay.show .turn-announcer-content {
+    transform: scale(1);
+}
+
+.turn-announcer-content h1 {
+    font-size: 6rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.8);
+}
+
+.turn-announcer-content h2 {
+    font-size: 3rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
 }

@@ -58,7 +58,12 @@ const mapBanEls = {
     sideModal: document.getElementById('side-selection-modal'),
     sideSelectTitle: document.getElementById('side-select-title'),
     pickedMapName: document.getElementById('picked-map-name'),
-    sideBtns: document.querySelectorAll('.side-btn')
+    sideBtns: document.querySelectorAll('.side-btn'),
+    
+    // Announcer Overlay
+    turnAnnouncer: document.getElementById('turn-announcer-overlay'),
+    turnAnnouncerTeam: document.getElementById('turn-announcer-team'),
+    turnAnnouncerAction: document.getElementById('turn-announcer-action')
 };
 
 // Initialize Map Ban
@@ -470,6 +475,30 @@ function updateTurnIndicator() {
     
     mapBanEls.currentTurnTeam.textContent = teamName;
     mapBanEls.currentAction.textContent = action;
+    
+    showTurnAnnouncer(teamName, action, currentStep.team);
+}
+
+function showTurnAnnouncer(teamName, action, teamIndex) {
+    if(!mapBanEls.turnAnnouncer) return;
+
+    // Set colors based on team
+    const teamColor = teamIndex === 0 ? 'var(--accent-red)' : '#50e3c2';
+    mapBanEls.turnAnnouncerTeam.style.color = teamColor;
+    mapBanEls.turnAnnouncerTeam.textContent = teamName;
+    mapBanEls.turnAnnouncerAction.textContent = `is ${action}ning`;
+    
+    // Show overlay
+    mapBanEls.turnAnnouncer.classList.remove('hidden');
+    // Force reflow
+    void mapBanEls.turnAnnouncer.offsetWidth;
+    mapBanEls.turnAnnouncer.classList.add('show');
+    
+    // Hide after short duration
+    setTimeout(() => {
+        mapBanEls.turnAnnouncer.classList.remove('show');
+        setTimeout(() => mapBanEls.turnAnnouncer.classList.add('hidden'), 300); // wait for fade out
+    }, 1500);
 }
 
 function renderDraftTracker() {
