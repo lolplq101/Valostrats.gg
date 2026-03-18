@@ -4,7 +4,7 @@ const API_BASE = 'https://valorant-api.com/v1';
 
 // Initialize Firebase (from global window object injected in index.html)
 const { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
-        getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } 
+        getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } 
         = window.firebaseModules;
 
 let app, auth, db;
@@ -355,11 +355,21 @@ async function saveCurrentComp() {
         els.saveCompBtn.innerText = "Saving...";
         els.saveCompBtn.disabled = true;
         
-        // Save to: users/{uid}/comps/{docId}
-        const userCompsRef = collection(db, "users", state.user.uid, "comps");
-        await addDoc(userCompsRef, newComp);
+        // Check if a comp with this exact name already exists
+        const existingComp = state.savedComps.find(c => c.name.toLowerCase() === name.toLowerCase());
         
-        showToast('Composition saved to cloud!', 'success');
+        if (existingComp) {
+            // Overwrite existing comp
+            const compDocRef = doc(db, "users", state.user.uid, "comps", existingComp.docId);
+            await updateDoc(compDocRef, newComp);
+            showToast('Existing composition updated!', 'success');
+        } else {
+            // Save as new comp
+            const userCompsRef = collection(db, "users", state.user.uid, "comps");
+            await addDoc(userCompsRef, newComp);
+            showToast('Composition saved to cloud!', 'success');
+        }
+        
         await loadCompsFromFirestore(); // Refresh list
     } catch (e) {
         console.error("Error saving doc: ", e);
